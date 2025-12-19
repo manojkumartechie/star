@@ -1,65 +1,112 @@
-import Image from "next/image";
+"use client"
+
+import { Hero3D } from "@/components/home/hero-3d"
+import { ProductCard } from "@/components/product/product-card"
+import { products, categories } from "@/lib/data"
+import { motion } from "framer-motion"
+import Link from "next/link"
+import Image from "next/image"
+import { ArrowRight } from "lucide-react"
 
 export default function Home() {
+  const trendingProducts = products.filter(p => p.isTrending)
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="flex flex-col min-h-screen">
+      <Hero3D />
+
+      {/* Featured Categories */}
+      <section className="py-20 bg-muted/30">
+        <div className="container px-4 md:px-6 mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center justify-between mb-10"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <h2 className="text-3xl font-bold tracking-tight">Shop by Category</h2>
+            <Link href="/shop" className="text-primary hover:underline flex items-center gap-1">
+              View All <ArrowRight className="h-4 w-4" />
+            </Link>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {categories.map((category, index) => (
+              <motion.div
+                key={category.name}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Link href={`/shop/${category.name.toLowerCase()}`} className="group block relative aspect-[4/5] overflow-hidden rounded-xl bg-muted">
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                    <h3 className="text-2xl font-bold text-white">{category.name}</h3>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Trending Products */}
+      <section className="py-20">
+        <div className="container px-4 md:px-6 mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="mb-10"
+          >
+            <h2 className="text-3xl font-bold tracking-tight">Trending Now</h2>
+            <p className="text-muted-foreground mt-2">Top picks from across the galaxy.</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {trendingProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <ProductCard product={product} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Promo Section */}
+      <section className="py-20 bg-primary text-primary-foreground relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1600&q=80')] bg-cover bg-center opacity-10 mix-blend-overlay" />
+        <div className="container px-4 md:px-6 mx-auto relative z-10 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Join the Revolution</h2>
+            <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto opacity-90">
+              Sign up for Star Prime and get instant quantum delivery on all orders.
+            </p>
+            <Link href="/register" className="inline-flex h-12 items-center justify-center rounded-full bg-background text-foreground px-8 text-lg font-medium transition-colors hover:bg-background/90">
+              Get Started
+            </Link>
+          </motion.div>
+        </div>
+      </section>
     </div>
-  );
+  )
 }
